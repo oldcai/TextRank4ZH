@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup
+import textrank4zh
 LONGDOC = """
 Please go to https://github.com/someus/TextRank4ZH for more info.
 """
 
 setup(
     name='textrank4zh',
-    version='0.2',
+    version=textrank4zh.__version__,
     description='Extract keywords and abstract Chinese article',
     long_description=LONGDOC,
     author='Letian Sun',
@@ -27,8 +28,8 @@ setup(
         'Topic :: Text Processing :: Linguistic',
     ],
     keywords='NLP,Chinese,Keywords extraction, Abstract extraction',
-    install_requires=['jieba >= 0.35', 'numpy >= 1.7.1', 'networkx >= 1.9.1'],
+    install_requires=['numpy >= 1.7.1', 'networkx >= 1.9.1', 'pyltp >= 0.1.9.1'],
     packages=['textrank4zh'],
-    package_dir={'textrank4zh':'textrank4zh'},
-    package_data={'textrank4zh':['*.txt',]},
+    package_dir={'textrank4zh': 'textrank4zh'},
+    package_data={'textrank4zh': ['*.txt']},
 )

@@ -7,9 +7,6 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-# import networkx as nx
-# import numpy as np
-
 from . import util
 from .Segmentation import Segmentation
 

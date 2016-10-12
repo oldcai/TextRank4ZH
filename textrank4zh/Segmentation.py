@@ -11,9 +11,11 @@ from pyltp import SentenceSplitter, Segmentor, Postagger
 
 import codecs
 import os
+from logging import getLogger
 
 from . import util
 
+logger = getLogger(__name__)
 segmentor = postagger = None
 
 
@@ -22,6 +24,7 @@ def get_segmentor(model_path='ltp_data'):
     if segmentor:
         return segmentor
     else:
+        logger.info('loading cws model')
         segmentor = Segmentor()
         segmentor.load('%s/cws.model' % model_path)
         return segmentor
@@ -32,6 +35,7 @@ def get_postagger(model_path='ltp_data'):
     if postagger:
         return postagger
     else:
+        logger.info('loading pos model')
         postagger = Postagger()
         postagger.load('%s/pos.model' % model_path)
         return postagger
@@ -64,7 +68,7 @@ class WordSegmentation(object):
         for word in codecs.open(self.stop_words_file, 'r', 'utf-8', 'ignore'):
             self.stop_words.add(word.strip())
     
-    def segment(self, text, lower = True, use_stop_words = True, use_speech_tags_filter = False):
+    def segment(self, text, lower=True, use_stop_words=True, use_speech_tags_filter=False):
         """对一段文本进行分词，返回list类型的分词结果
 
         Keyword arguments:
@@ -77,7 +81,7 @@ class WordSegmentation(object):
         postags = self.postagger.postag(words)
         words_with_tag = zip(words, postags)
         
-        if use_speech_tags_filter == True:
+        if use_speech_tags_filter is True:
             words_with_tag = [(w, t) for w, t in words_with_tag if t in self.default_speech_tag_filter]
 
         # 去除特殊符号

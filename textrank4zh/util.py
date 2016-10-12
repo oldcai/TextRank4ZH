@@ -7,7 +7,6 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import os
 import math
 import networkx as nx
 import numpy as np
@@ -64,6 +63,7 @@ def combine(word_list, window = 2):
         res = zip(word_list, word_list2)
         for r in res:
             yield r
+
 
 def get_similarity(word_list1, word_list2):
     """默认的用于计算两个句子相似度的函数。
