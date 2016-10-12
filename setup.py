@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from distutils.core import setup
+from setuptools import setup
 LONGDOC = """
 Please go to https://github.com/someus/TextRank4ZH for more info.
 """

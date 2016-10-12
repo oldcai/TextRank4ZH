@@ -166,7 +166,8 @@ def sort_words(vertex_source, edge_source, window = 2, pagerank_config = {'alpha
 
     return sorted_words
 
-def sort_sentences(sentences, words, sim_func = get_similarity, pagerank_config = {'alpha': 0.85,}):
+
+def sort_sentences(sentences, words, sim_func, pagerank_config):
     """将句子按照关键程度从大到小排序
 
     Keyword arguments:
@@ -191,7 +192,7 @@ def sort_sentences(sentences, words, sim_func = get_similarity, pagerank_config 
     sorted_scores = sorted(scores.items(), key = lambda item: item[1], reverse=True)
 
     for index, score in sorted_scores:
-        item = AttrDict(sentence=sentences[index], weight=score)
+        item = AttrDict(sentence=sentences[index], weight=score, index=index)
         sorted_sentences.append(item)
 
     return sorted_sentences
