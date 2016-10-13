@@ -28,7 +28,7 @@ setup(
         'Topic :: Text Processing :: Linguistic',
     ],
     keywords='NLP,Chinese,Keywords extraction, Abstract extraction',
-    install_requires=['numpy >= 1.7.1', 'networkx >= 1.9.1', 'pyltp >= 0.1.9.1'],
+    install_requires=['numpy >= 1.7.1', 'networkx >= 1.9.1', 'requests'],
     packages=['textrank4zh'],
     package_dir={'textrank4zh': 'textrank4zh'},
     package_data={'textrank4zh': ['*.txt']},

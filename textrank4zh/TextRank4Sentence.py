@@ -17,7 +17,7 @@ class TextRank4Sentence(object):
             self, stop_words_file=None,
             allow_speech_tags=util.allow_speech_tags,
             delimiters=util.sentence_delimiters,
-            model_path='ltp_data'):
+            api_url='http://localhost:11200'):
         """
         Keyword arguments:
         stop_words_file  --  str，停止词文件路径，若不是str则是使用默认停止词文件
@@ -32,7 +32,7 @@ class TextRank4Sentence(object):
         self.seg = Segmentation(stop_words_file=stop_words_file,
                                 allow_speech_tags=allow_speech_tags,
                                 delimiters=delimiters,
-                                model_path=model_path)
+                                api_url=api_url)
         
     def get_key_sentences(
             self, text, lower=False,

@@ -7,38 +7,15 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from pyltp import SentenceSplitter, Segmentor, Postagger
-
 import codecs
 import os
 from logging import getLogger
 
+import requests
+
 from . import util
 
 logger = getLogger(__name__)
-segmentor = postagger = None
-
-
-def get_segmentor(model_path='ltp_data'):
-    global segmentor
-    if segmentor:
-        return segmentor
-    else:
-        logger.info('loading cws model')
-        segmentor = Segmentor()
-        segmentor.load('%s/cws.model' % model_path)
-        return segmentor
-
-
-def get_postagger(model_path='ltp_data'):
-    global postagger
-    if postagger:
-        return postagger
-    else:
-        logger.info('loading pos model')
-        postagger = Postagger()
-        postagger.load('%s/pos.model' % model_path)
-        return postagger
 
 
 def get_default_stop_words_file():
@@ -49,7 +26,7 @@ def get_default_stop_words_file():
 class WordSegmentation(object):
     """ 分词 """
     
-    def __init__(self, stop_words_file=None, allow_speech_tags=util.allow_speech_tags, model_path='ltp_data'):
+    def __init__(self, stop_words_file, allow_speech_tags, api_url):
         """
         Keyword arguments:
         stop_words_file    -- 保存停止词的文件路径，utf8编码，每行一个停止词。若不是str类型，则使用默认的停止词
@@ -61,8 +38,7 @@ class WordSegmentation(object):
         self.default_speech_tag_filter = allow_speech_tags
         self.stop_words = set()
         self.stop_words_file = get_default_stop_words_file()
-        self.segmentor = get_segmentor(model_path)
-        self.postagger = get_postagger(model_path)
+        self.api_url = api_url
         if type(stop_words_file) is str:
             self.stop_words_file = stop_words_file
         for word in codecs.open(self.stop_words_file, 'r', 'utf-8', 'ignore'):
@@ -77,15 +53,18 @@ class WordSegmentation(object):
         use_speech_tags_filter -- 是否基于词性进行过滤。若为True，则使用self.default_speech_tag_filter过滤。否则，不过滤。    
         """
         text = util.as_text(text)
-        words = self.segmentor.segment(text)
-        postags = self.postagger.postag(words)
-        words_with_tag = zip(words, postags)
+        response = requests.post(self.api_url, text.encode('utf-8'), timeout=60)
+        response.raise_for_status()
+        words_with_tag = response.json()
+        word_tag_tupes = []
+        for word_with_tag in words_with_tag:
+            word_tag_tupes.append(word_with_tag.rsplit(':'))
         
         if use_speech_tags_filter is True:
-            words_with_tag = [(w, t) for w, t in words_with_tag if t in self.default_speech_tag_filter]
+            word_tag_tupes = [(w, t) for w, t in word_tag_tupes if t in self.default_speech_tag_filter]
 
         # 去除特殊符号
-        word_list = [w.strip() for (w, t) in words_with_tag if t != 'x']
+        word_list = [w.strip() for (w, t) in word_tag_tupes if t != 'x']
         word_list = [word for word in word_list if len(word) > 0]
         
         if lower:
@@ -122,18 +101,26 @@ class SentenceSegmentation(object):
         self.delimiters = set([util.as_text(item) for item in delimiters])
     
     def segment(self, text):
-        res = SentenceSplitter.split(util.as_text(text))
+        res = [util.as_text(text)]
+
+        util.debug(res)
+        util.debug(self.delimiters)
+
+        for sep in self.delimiters:
+            text, res = res, []
+            for seq in text:
+                res += seq.split(sep)
         res = [s.strip() for s in res if len(s.strip()) > 0]
-        return res 
+        return res
 
 
 class Segmentation(object):
     
     def __init__(
-            self, stop_words_file=None,
-            allow_speech_tags=util.allow_speech_tags,
-            delimiters=util.sentence_delimiters,
-            model_path='ltp_data'
+            self, stop_words_file,
+            allow_speech_tags,
+            delimiters,
+            api_url,
     ):
         """
         Keyword arguments:
@@ -141,7 +128,7 @@ class Segmentation(object):
         delimiters      -- 用来拆分句子的符号集合
         """
         self.ws = WordSegmentation(
-            stop_words_file=stop_words_file, allow_speech_tags=allow_speech_tags, model_path=model_path
+            stop_words_file=stop_words_file, allow_speech_tags=allow_speech_tags, api_url=api_url
         )
         self.ss = SentenceSegmentation(delimiters=delimiters)
         self.filter_options = {

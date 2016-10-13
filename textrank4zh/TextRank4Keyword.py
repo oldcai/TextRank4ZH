@@ -13,9 +13,10 @@ from .Segmentation import Segmentation
 
 class TextRank4Keyword(object):
     
-    def __init__(self, stop_words_file = None, 
-                 allow_speech_tags = util.allow_speech_tags, 
-                 delimiters = util.sentence_delimiters):
+    def __init__(self, stop_words_file=None,
+                 allow_speech_tags=util.allow_speech_tags,
+                 delimiters=util.sentence_delimiters,
+                 api_url='http://localhost:11200'):
         """
         Keyword arguments:
         stop_words_file  --  str，指定停止词文件路径（一行一个停止词），若为其他类型，则使用默认停止词文件
@@ -31,7 +32,8 @@ class TextRank4Keyword(object):
         
         self.seg = Segmentation(stop_words_file=stop_words_file, 
                                 allow_speech_tags=allow_speech_tags, 
-                                delimiters=delimiters)
+                                delimiters=delimiters,
+                                api_url=api_url)
 
         self.sentences = None
         self.words_no_filter = None     # 2维列表
