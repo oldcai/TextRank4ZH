@@ -58,7 +58,7 @@ class WordSegmentation(object):
         words_with_tag = response.json()
         word_tag_tupes = []
         for word_with_tag in words_with_tag:
-            word_tag_tupes.append(word_with_tag.rsplit(':'))
+            word_tag_tupes.append(word_with_tag.rsplit(':', 1))
         
         if use_speech_tags_filter is True:
             word_tag_tupes = [(w, t) for w, t in word_tag_tupes if t in self.default_speech_tag_filter]
