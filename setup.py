@@ -1,13 +1,30 @@
 # -*- coding: utf-8 -*-
-from setuptools import setup
-import textrank4zh
+import os
+from setuptools import find_packages, setup
+
+
 LONGDOC = """
 Please go to https://github.com/someus/TextRank4ZH for more info.
 """
 
+install_requires = []
+dependency_links = []
+with open('requirements.txt') as reqs:
+    for line in reqs.read().split('\n'):
+        if line and not line.startswith('#'):
+            if '#' in line:
+                dependency_links.append(line)
+            else:
+                install_requires.append(line)
+
+# allow setup.py to be run from any path
+os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
+
+packages = find_packages()
+
 setup(
     name='textrank4zh',
-    version=textrank4zh.__version__,
+    version='0.4',
     description='Extract keywords and abstract Chinese article',
     long_description=LONGDOC,
     author='Letian Sun',
@@ -28,8 +45,9 @@ setup(
         'Topic :: Text Processing :: Linguistic',
     ],
     keywords='NLP,Chinese,Keywords extraction, Abstract extraction',
-    install_requires=['numpy >= 1.7.1', 'networkx >= 1.9.1', 'requests'],
-    packages=['textrank4zh'],
+    install_requires=install_requires,
+    dependency_links=dependency_links,
+    packages=packages,
     package_dir={'textrank4zh': 'textrank4zh'},
     package_data={'textrank4zh': ['*.txt']},
 )
