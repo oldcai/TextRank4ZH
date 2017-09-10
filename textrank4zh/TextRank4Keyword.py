@@ -81,6 +81,8 @@ class TextRank4Keyword(object):
             pagerank_config=pagerank_config or {'alpha': 0.85}
         )
 
+        _, self.words_no_filter = self.seg.segment(text=text, lower=lower, filters='no_filter')
+
     def get_keywords(self, num = 6, word_min_len = 1):
         """获取最重要的num个长度大于等于word_min_len的关键词。
 
@@ -114,16 +116,9 @@ class TextRank4Keyword(object):
                 else:
                     if len(one) > 1:
                         keyphrases.add(''.join(one))
-                    if len(one) == 0:
-                        continue
-                    else:
-                        one = []
-            # 兜底
+                    one = []
             if len(one) > 1:
                 keyphrases.add(''.join(one))
 
         return [phrase for phrase in keyphrases 
                 if self.text.count(phrase) >= min_occur_num]
-
-if __name__ == '__main__':
-    pass

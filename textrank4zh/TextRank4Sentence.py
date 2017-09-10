@@ -69,7 +69,4 @@ class TextRank4Sentence(object):
                 count += 1
         result.sort(key=lambda x: x['index'])
         return result
-    
 
-if __name__ == '__main__':
-    pass

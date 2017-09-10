@@ -157,6 +157,3 @@ class Segmentation(object):
 
         return sentences, filtered_words
 
-
-if __name__ == '__main__':
-    pass
