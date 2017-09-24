@@ -10,6 +10,7 @@ from __future__ import (absolute_import, division, print_function,
 import codecs
 import os
 from logging import getLogger
+from json import JSONDecodeError
 
 import requests
 
@@ -55,7 +56,10 @@ class WordSegmentation(object):
         text = util.as_text(text)
         response = requests.post(self.api_url, text.encode('utf-8'), timeout=60)
         response.raise_for_status()
-        words_with_tag = response.json()
+        try:
+            words_with_tag = response.json()
+        except JSONDecodeError:
+            words_with_tag = []
         word_tag_tupes = []
         for word_with_tag in words_with_tag:
             word_tag_tupes.append(word_with_tag.rsplit(':', 1))
